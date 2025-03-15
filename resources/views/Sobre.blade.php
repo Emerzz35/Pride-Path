@@ -6,6 +6,6 @@
     <title>Pride Path</title>
 </head>
 <body>
- <h1>Sobre Nós aa</h1>   
+ <h1>Sobre Nós</h1>   
 </body>
 </html>
