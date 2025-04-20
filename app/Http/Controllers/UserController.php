@@ -29,12 +29,21 @@ class UserController extends Controller
      */
     public function store(Request $request, User $user)
     {
+    //dd($request);
        $validated = $request->validate([
         'name' => 'required|min:2|max:200',
-        'email' => 'required|min:5|max:200|email|unique:users',
-        'password' => 'required|min:7|max:300'
+        'phone' => 'required|min:14|max:14',
+        'day_of_birth' => 'required|min:10|max:10',
+        'cpf' => 'required|min:14|max:14',
+        'email' => 'required|min:5|max:200|email|unique:users|confirmed',
+        'password' => 'required|min:7|max:300|confirmed',
+        'cep' => 'required|min:9|max:9',
+        'address_street' => 'required|min:5|max:200',
+        'address_complement' => 'max:200',
+        'address_number' => 'min:1|max:9999999999|integer',
+        'address_city' => 'required|min:3|max:200',
        ]);
-
+       
        $strongPassword = $user->validatePassword($validated['password']);
        
        $user = $user->fill($validated);
