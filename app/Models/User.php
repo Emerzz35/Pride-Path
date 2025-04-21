@@ -30,8 +30,19 @@ class User extends Authenticatable
         'address_street',
         'address_complement',
         'address_number',
-        'address_city'
+        'address_city',
+        'cnpj',
+        'corporate reason',
+        'state_registration',
+        'responsable',
+        'state_id'
     ];
+
+    public function state()
+    {
+        return $this->belongsTo(State::class);
+    }
+    
 
     /**
      * The attributes that should be hidden for serialization.

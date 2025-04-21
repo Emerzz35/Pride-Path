@@ -1,4 +1,5 @@
 <input type="text" name="cep" onkeyup="formatarcep(this)" placeholder="CEP: 00000-000" maxlength="8" value="{{ old('cep') }}" class=" @error('cep') fild_error @enderror">   
+ {{-- A classe "fild_error" é adicionada quando o usuario não preenche o campo corretamente, usa ela pra estilizar --}}
 @error('cep')
     <p>{{ $message }} </p>    
 @enderror
@@ -16,6 +17,17 @@
 @enderror
 <input type="text" name="address_city" placeholder="address_city" value="{{ old('address_city') }}" class=" @error('address_city') fild_error @enderror">   
 @error('address_city')
+    <p>{{ $message }} </p>    
+@enderror
+<select name="state_id" id="state_id" class=" @error('state_id') fild_error @enderror">
+    <option value="">Selecione um estado</option>
+    @foreach ($states as $state)
+        <option value="{{ $state->id }}" {{ old('state_id') == $state->id ? 'selected' : '' }}>
+            {{ $state->name }}
+        </option>
+    @endforeach
+</select>
+@error('state_id')
     <p>{{ $message }} </p>    
 @enderror
 
