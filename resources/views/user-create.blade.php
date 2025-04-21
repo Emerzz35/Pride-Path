@@ -27,7 +27,7 @@
 
         <input type="hidden" name="user_type" value="{{ $tipo }}">
 
-        <span>Já tem uma conta? <a href="{{ route('user-login') }}">Entrar</a></span>
+        <span>Já tem uma conta? <a href="{{ route('login') }}">Entrar</a></span>
         <x-button linkto='user-insert'>Criar nova conta</x-button>
     </form>
 </main>
