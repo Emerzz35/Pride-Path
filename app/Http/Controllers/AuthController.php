@@ -4,10 +4,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 
 class AuthController extends Controller
 {
    public function index(){
+    if (Auth::user()){
+        return Redirect('profile');
+    }
     return view('user-login');
    }
 
@@ -21,7 +25,7 @@ class AuthController extends Controller
     if(Auth::attempt($credentials)){
         $request->session()->regenerate();
 
-        return redirect()->route('dashboard');
+        return redirect()->route('profile');
     }
 
         return back()->withInput()->with('status', 'Login invalido');
