@@ -35,7 +35,8 @@ class User extends Authenticatable
         'corporate reason',
         'state_registration',
         'responsable',
-        'state_id'
+        'state_id',
+        'image'
     ];
 
     public function state()

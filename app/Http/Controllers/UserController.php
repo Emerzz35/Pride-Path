@@ -65,8 +65,20 @@ class UserController extends Controller
        
        $strongPassword = $user->validatePassword($validated['password']);
        
+        // Image Upload
+
+        if ($request->hasFile('image') && $request->file('image')->isValid()){
+            $requestImage = $request->image;
+            $extension = $requestImage->extension();
+            $imageName = md5($requestImage->getClientOriginalName() . strtotime("now")) . "." . $extension;
+            $requestImage->move(public_path('img/profile'), $imageName);
+            
+            $user->image = $imageName;
+        }
+       
        $user = $user->fill($validated);
        $user->password = Hash::make($strongPassword);
+       //dd($user);
        $user->save();
        return 'usuário cadastrado';
     }

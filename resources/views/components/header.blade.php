@@ -2,7 +2,7 @@
 
     @auth
         <div class="menu_profile"> 
-                <div class="user_picture"> {{ substr(auth()->user()->name, 0, 1) }} </div>
+                <div class="user_picture"> <img src="/img/profile/{{ auth()->user()->image }}"></div>
             
 
             <nav>
