@@ -32,6 +32,8 @@
             <p>{{ $message }} </p>    
         @enderror
 
+        
+        @push('scripts')
         <script>
             function formatarTelefone(input) {
             var telefone = input.value.replace(/\D/g, '');
@@ -44,3 +46,5 @@
             input.value = cpf;
           }
         </script>
+        @endpush
+        

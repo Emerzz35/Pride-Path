@@ -30,11 +30,12 @@
 @error('state_id')
     <p>{{ $message }} </p>    
 @enderror
-
+@push('scripts')
 <script>
     function formatarcep(input) {
     var cep = input.value.replace(/\D/g, '');
     cep = cep.replace(/(\d{5})(\d{3})/, '$1-$2');
     input.value = cep;
   }
-</script>
+</script>   
+@endpush

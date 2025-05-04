@@ -1,4 +1,4 @@
-<a href="{{ route($linkto) }}">
+<a href="{{route($linkto)}}" id="{{ $id ?? '' }}">
     <button class={{ $class ?? '' }}>
         {{ $slot }}
     </button>

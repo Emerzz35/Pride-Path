@@ -12,7 +12,7 @@
         </a>
     </div>
 
-    <form action="{{ route('user-insert') }}" method="POST" enctype="multipart/form-data">
+    <form action="{{ route('user-insert') }}" method="POST">
         @csrf
 
         {{-- Formulário dinâmico --}}
@@ -26,8 +26,6 @@
         @include('components.address-form')
 
         <input type="hidden" name="user_type" value="{{ $tipo }}">
-        <label for="image">Foto de perfil</label>
-        <input type="file" id="image" name="image">
         <span>Já tem uma conta? <a href="{{ route('login') }}">Entrar</a></span>
         <x-button linkto='user-insert'>Criar nova conta</x-button>
     </form>

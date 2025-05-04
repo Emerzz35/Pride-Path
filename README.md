@@ -9,6 +9,7 @@ Rodar esses comandos:
 - composer install (Instalar bibliotecas de terceiros)
 - php artisan migrate (Criar migrations)
 - php artisan db:seed (Popular migrations com as seeders)
+- npm run dev (Rodar Plugins como Tailwind Css e Vite)
 - php artisan serve (Rodar o laravel)
 - Se necessário criar chave da aplicação: php artisan key:generate
 - Criar arquivo .env

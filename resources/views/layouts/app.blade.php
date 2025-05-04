@@ -11,5 +11,6 @@
         @include('components.header')
 
         @yield('content', 'Nenuhm conteudo renderizado')
+        @stack('scripts')
     </body>
 </html>
