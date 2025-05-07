@@ -68,7 +68,9 @@ class UserController extends Controller
        
        $user = $user->fill($validated);
        $user->password = Hash::make($strongPassword);
-       //dd($user);
+       if ($request->user_type === 'pj') {
+            $user->name = $request->corporate_reason;
+       }
        $user->save();
        return 'usuário cadastrado';
     }
@@ -77,9 +79,13 @@ class UserController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Request $request)
     {
-   
+        $user = $request->user();
+        $tipo = $user && !empty($user->cnpj) ? 'pj' : 'pf';
+
+        $states = State::all();
+        return view('user-edit', compact('tipo'),  compact('states'));
     }
 
     /**
@@ -104,6 +110,64 @@ class UserController extends Controller
 
         return back(); 
     }
+
+    public function update(Request $request)
+    {
+        //dd($request);
+        if ($request->user_type === 'pf') {
+            $validated = $request->validate([
+             'name' => 'required|min:5|max:200',
+             'phone' => 'required|min:14|max:14',
+             'cep' => 'required|min:9|max:9',
+             'address_street' => 'required|min:5|max:200',
+             'address_complement' => 'max:200',
+             'address_number' => 'min:1|max:9999999999|integer',
+             'address_city' => 'required|min:3|max:200',
+             'state_id' => 'required',
+            ]);
+         }elseif ($request->user_type === 'pj') {
+             $validated = $request->validate([
+     
+                 'phone' => 'required|min:14|max:14',
+                 'address_street' => 'required|min:5|max:200',
+                 'address_complement' => 'max:200',
+                 'cep' => 'required|min:9|max:9',
+                 'address_number' => 'min:1|max:9999999999|integer',
+                 'address_city' => 'required|min:3|max:200',
+                 'corporate_reason' => 'required|min:3|max:200',
+                 'state_registration' => 'required|min:8|max:20',
+                 'state_id' => 'required',
+                 'responsable' => 'required|min:5|max:200'
+                ]);
+   
+         
+         }
+         $request->user()->update([
+            'name'=>$request->name,
+            'email'=>$request->email,
+            'phone'=>$request->phone,
+            'cpf'=>$request->cpf,
+            'day_of_birth'=>$request->day_of_birth,
+            'cep'=>$request->cep,
+            'address_street'=>$request->address_street,
+            'address_complement'=>$request->address_complement,
+            'address_number'=>$request->address_number,
+            'address_city'=>$request->address_city,
+            'cnpj'=>$request->cnpj,
+            'corporate_reason'=>$request->corporate_reason,
+            'state_registration'=>$request->state_registration,
+            'responsable'=>$request->responsable,
+            'state_id'=>$request->state_id,
+         ]);
+
+         if ($request->user_type === 'pj') {
+            $request->user()->update([
+                'name' => $request->corporate_reason
+        ]);
+       }
+        return back(); 
+    }
+
 
     /**
      * Remove the specified resource from storage.

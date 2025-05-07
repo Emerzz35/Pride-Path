@@ -1,30 +1,32 @@
-<input type="text" name="cep" onkeyup="formatarcep(this)" placeholder="CEP: 00000-000" maxlength="8" value="{{ old('cep') }}" class=" @error('cep') fild_error @enderror">   
+<input type="text" name="cep" onkeyup="formatarcep(this)" placeholder="CEP: 00000-000" maxlength="8" @guest value="{{ old('cep') }}" @endguest @auth value="{{ auth()->user()->cep }}" @endauth class=" @error('cep') fild_error @enderror">   
  {{-- A classe "fild_error" é adicionada quando o usuario não preenche o campo corretamente, usa ela pra estilizar --}}
 @error('cep')
     <p>{{ $message }} </p>    
 @enderror
-<input type="text" name="address_street" placeholder="address_street" value="{{ old('address_street') }}" class=" @error('address_street') fild_error @enderror">   
+<input type="text" name="address_street" placeholder="address_street" @guest value="{{ old('address_street') }}" @endguest @auth value="{{ auth()->user()->address_street }}" @endauth class=" @error('address_street') fild_error @enderror">   
 @error('address_street')
     <p>{{ $message }} </p>    
 @enderror
-<input type="text" name="address_number" placeholder="address_number" value="{{ old('address_number') }}" class=" @error('address_number') fild_error @enderror">   
+<input type="text" name="address_number" placeholder="address_number" @guest value="{{ old('address_number') }}" @endguest @auth value="{{ auth()->user()->address_number }}" @endauth class=" @error('address_number') fild_error @enderror">   
 @error('address_number')
     <p>{{ $message }} </p>    
 @enderror
-<input type="text" name="address_complement" placeholder="address_complement" value="{{ old('address_complement') }}" class=" @error('address_complement') fild_error @enderror">   
+<input type="text" name="address_complement" placeholder="address_complement" @guest value="{{ old('address_complement') }}" @endguest @auth value="{{ auth()->user()->address_complement }}" @endauth class=" @error('address_complement') fild_error @enderror">   
 @error('address_complement')
     <p>{{ $message }} </p>    
 @enderror
-<input type="text" name="address_city" placeholder="address_city" value="{{ old('address_city') }}" class=" @error('address_city') fild_error @enderror">   
+<input type="text" name="address_city" placeholder="address_city" @guest value="{{ old('address_city') }}" @endguest @auth value="{{ auth()->user()->address_city }}" @endauth class=" @error('address_city') fild_error @enderror">   
 @error('address_city')
     <p>{{ $message }} </p>    
 @enderror
 <select name="state_id" id="state_id" class=" @error('state_id') fild_error @enderror">
     <option value="">Selecione um estado</option>
     @foreach ($states as $state)
-        <option value="{{ $state->id }}" {{ old('state_id') == $state->id ? 'selected' : '' }}>
+        <option value="{{ $state->id }}"
+            {{ (old('state_id') ?? (auth()->check() ? auth()->user()->state_id : null)) == $state->id ? 'selected' : '' }}>
             {{ $state->name }}
         </option>
+    
     @endforeach
 </select>
 @error('state_id')

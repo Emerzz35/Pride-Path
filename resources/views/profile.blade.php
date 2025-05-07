@@ -4,6 +4,10 @@
 <img src="/img/profile/{{ auth()->user()->image }}" id='profile-picture'>
 
 <p>{{ auth()->user()->name }}</p>
+
+<a href="{{ route('user-edit') }}">Editar perfil</a>
+
+
 <x-modal>
     <div class="flex items-center justify-between mb-4">
         <h1 class="text-xl font-semibold text-gray-900">Selecione uma foto de perfil</h1>

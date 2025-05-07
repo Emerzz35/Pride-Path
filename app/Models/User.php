@@ -32,7 +32,7 @@ class User extends Authenticatable
         'address_number',
         'address_city',
         'cnpj',
-        'corporate reason',
+        'corporate_reason',
         'state_registration',
         'responsable',
         'state_id',

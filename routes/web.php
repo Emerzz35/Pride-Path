@@ -23,6 +23,7 @@ Route::middleware(['auth'])->group(function(){
 // Paginas que só podem ser acessadas por usuarios logados
 Route::get('/profile', [UserController::class, 'show'])->name('profile');
 Route::patch('/profile', [UserController::class, 'updateImage'])->name('user-updateImage');
-
+Route::get('/profile-edit', [UserController::class, 'edit'])->name('user-edit');
+Route::patch('/profile-edit', [UserController::class, 'update'])->name('user-update');
 
 });

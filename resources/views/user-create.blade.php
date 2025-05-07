@@ -11,7 +11,6 @@
             <button type="button" {{ $tipo === 'pj' ? '' : '' }}>Pessoa Jurídica</button>
         </a>
     </div>
-
     <form action="{{ route('user-insert') }}" method="POST">
         @csrf
 
@@ -21,7 +20,6 @@
         @else
             @include('components.user-pf-form')
         @endif
-
         {{-- Endereço --}}
         @include('components.address-form')
 
