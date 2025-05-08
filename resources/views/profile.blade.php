@@ -1,13 +1,31 @@
 @extends('layouts.app')
 
 @section('content')
-<img src="/img/profile/{{ auth()->user()->image }}" id='profile-picture'>
+<img src="/img/profile/{{ $User->image }}" @if ($User->id === Auth()->user()->id) id='profile-picture'  @endif >
 
-<p>{{ auth()->user()->name }}</p>
+<p>{{ $User->name }}</p>
 
+@if ($User->id === Auth()->user()->id) 
 <a href="{{ route('user-edit') }}">Editar perfil</a>
+@endif
 
 
+{{-- Servicos --}}
+
+
+@foreach ($User->Service as  $service)
+
+    <a href="{{ route('service-show', $service->id) }}">
+        <img src="/{{ $service->ServiceImage->first()->url }}">  
+        {{$service->name}}
+        {{$service->description }}
+        {{$service->price}}
+    </a>
+    
+@endforeach
+
+
+@if ($User->id === Auth()->user()->id) 
 <x-modal>
     <div class="flex items-center justify-between mb-4">
         <h1 class="text-xl font-semibold text-gray-900">Selecione uma foto de perfil</h1>
@@ -15,7 +33,7 @@
     </div>
 
     <div>
-        <form method="POST" action="{{ route('user-updateImage') }}" enctype="multipart/form-data" class="space-y-4">
+        <form method="POST" action="{{ route('user-updateImage') }}" accept=".jpeg,.png,.jpg" enctype="multipart/form-data" class="space-y-4">
             @csrf
             @method('patch')
             <input
@@ -34,6 +52,7 @@
         </form>
     </div>
 </x-modal>
+@endif
 
 @endsection
 
@@ -52,7 +71,13 @@
             boxModal.classList.remove('flex')
             boxModal.classList.add('hidden')   
         })
-
+        @if(session('show_modal'))
+        
+        window.addEventListener('DOMContentLoaded', () => {
+            boxModal.classList.remove('hidden')
+            boxModal.classList.add('flex')   
+        })
+        @endif
         
     </script>
 @endpush

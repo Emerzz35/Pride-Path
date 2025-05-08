@@ -8,7 +8,7 @@
             <nav>
                 <ul>
                     <li>
-                        <a href="/profile">{{ auth()->user()->name }}</a>
+                        <a href="/profile/{{ auth()->user()->id }}">{{ auth()->user()->name }}</a>
                     </li>
                     <li>
                         <a href="/logout">Sair</a>

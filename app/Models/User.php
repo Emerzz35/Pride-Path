@@ -44,6 +44,9 @@ class User extends Authenticatable
         return $this->belongsTo(State::class);
     }
     
+    public function Service(){
+        return $this->hasMany(Service::class);
+    }
 
     /**
      * The attributes that should be hidden for serialization.

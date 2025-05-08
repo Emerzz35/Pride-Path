@@ -23,7 +23,8 @@ class UserSeeder extends Seeder
         'address_street'=>'a',
         'address_number'=>'3',
         'address_city'=>'a',
-        'state_id'=>'1'
+        'state_id'=>'1',
+        'image'=>'default.png'
        ]);
     }
 }

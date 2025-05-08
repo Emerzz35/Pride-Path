@@ -6,14 +6,18 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Models\State;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function show(){
-        return view('profile');
+    public function show(User $User){
+        $Users = User::all();
+        return view('profile')
+        ->with('User', $User);
+    
     }
 
     public function create(Request $request)
@@ -72,7 +76,10 @@ class UserController extends Controller
             $user->name = $request->corporate_reason;
        }
        $user->save();
-       return 'usuário cadastrado';
+       Auth::login($user);
+       session()->flash('show_modal', true);
+       return redirect(route('profile'));
+
     }
 
 
