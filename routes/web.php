@@ -30,6 +30,7 @@ Route::patch('/profile-edit', [UserController::class, 'update'])->name('user-upd
 
 Route::get('/criar-servico', [ServiceController::class, 'create'])->name('service-create');
 Route::post('/criar-servico', [ServiceController::class, 'store'])->name('service-store');
+Route::patch('/servico/{service}', [ServiceController::class, 'update'])->name('service-update');
 Route::get('/servico/{service}',[ServiceController::class,'show'])->name('service-show');
 Route::get('/servicos',[ServiceController::class,'index'])->name('service-index');
 

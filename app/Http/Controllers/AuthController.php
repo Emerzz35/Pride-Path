@@ -22,10 +22,12 @@ class AuthController extends Controller
         'password' => 'required'
     ]);
 
+    
     if(Auth::attempt($credentials)){
         $request->session()->regenerate();
 
-        return redirect()->route('profile');
+        $userId = Auth::User()->id;
+        return redirect()->route('profile', $userId);
     }
 
         return back()->withInput()->with('status', 'Login invalido');
