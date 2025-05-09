@@ -78,7 +78,7 @@ class UserController extends Controller
        $user->save();
        Auth::login($user);
        session()->flash('show_modal', true);
-       return redirect(route('profile'));
+       return redirect(route('profile', $user->id));
 
     }
 

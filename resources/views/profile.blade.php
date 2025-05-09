@@ -6,7 +6,9 @@
 <p>{{ $User->name }}</p>
 
 @if ($User->id === Auth()->user()->id) 
-<a href="{{ route('user-edit') }}">Editar perfil</a>
+<x-button linkto='user-edit'>Editar perfil</x-button>
+<x-button linkto='order-list'>Meus pedidos</x-button>
+<x-button linkto='order-received'>Minhas entregas</x-button>
 @endif
 
 

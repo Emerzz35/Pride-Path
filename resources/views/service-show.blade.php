@@ -24,66 +24,94 @@
 
 
     @if ( $Service->user->id === Auth()->user()->id)
-    <x-button class='' id='editar-servico'>Editar Serviço</x-button>
-    <x-modal>
-        <div class="flex items-center justify-between mb-4">
-            <h1 class="text-xl font-semibold text-gray-900">Editar Serviço</h1>
-            <x-jam-close class="cursor-pointer text-gray-500 hover:text-gray-700"  id="close-modal"/>
-        </div>
+        <x-button class='' id='editar-servico'>Editar Serviço</x-button>
+        <x-modal>
+            <div class="flex items-center justify-between mb-4">
+                <h1 class="text-xl font-semibold text-gray-900">Editar Serviço</h1>
+                <x-jam-close class="cursor-pointer text-gray-500 hover:text-gray-700"  id="close-modal"/>
+            </div>
 
-        <div>
-            <form action="{{ route('service-update', $Service->id) }}" method="POST" enctype="multipart/form-data">
-                @csrf
-                @method('PATCH')
-                <input type="text" name="name" placeholder="Titulo" value="{{ $Service->name }}"   class=" @error('name') fild_error @enderror">
-                @error('name')
-                <p>{{ $message }} </p>    
-                @enderror
-        
-                <input type="text" name="description" placeholder="Descrição" value="{{ $Service->description }}"  class=" @error('description') fild_error @enderror">
-                @error('description')
-                <p>{{ $message }} </p>    
-                @enderror
-        
-                <input type="text" id="price" name="price" placeholder="Preço" value="{{ $Service->price}}" class="@error('price') fild_error @enderror">
-                @error('price')
-                <p>{{ $message }}</p>    
-                @enderror
-        
-                <div>
-                    <label class="block text-sm font-medium">Categorias</label>
-                    <div class="mt-2 space-y-1">
-                        @foreach ($categories as $category)
-                            <label class="flex items-center">
-                                <input type="checkbox" name="categories[]" value="{{ $category->id }}" 
-                                    {{ in_array($category->id, $serviceCategories) ? 'checked' : '' }} class="mr-2">
-                                {{ $category->name }}
-                            </label>
-                        @endforeach
+            <div>
+                <form action="{{ route('service-update', $Service->id) }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    @method('PATCH')
+                    <input type="text" name="name" placeholder="Titulo" value="{{ $Service->name }}"   class=" @error('name') fild_error @enderror">
+                    @error('name')
+                    <p>{{ $message }} </p>    
+                    @enderror
+            
+                    <input type="text" name="description" placeholder="Descrição" value="{{ $Service->description }}"  class=" @error('description') fild_error @enderror">
+                    @error('description')
+                    <p>{{ $message }} </p>    
+                    @enderror
+            
+                    <input type="text" id="price" name="price" placeholder="Preço" value="{{ $Service->price}}" class="@error('price') fild_error @enderror">
+                    @error('price')
+                    <p>{{ $message }}</p>    
+                    @enderror
+            
+                    <div>
+                        <label class="block text-sm font-medium">Categorias</label>
+                        <div class="mt-2 space-y-1">
+                            @foreach ($categories as $category)
+                                <label class="flex items-center">
+                                    <input type="checkbox" name="categories[]" value="{{ $category->id }}" 
+                                        {{ in_array($category->id, $serviceCategories) ? 'checked' : '' }} class="mr-2">
+                                    {{ $category->name }}
+                                </label>
+                            @endforeach
+                        </div>
                     </div>
-                </div>
-                
-                @error('categories')
-                <p>{{ $message }}</p>    
-                @enderror
-        
-                <input type="file" name="images[]" multiple accept=".jpeg,.png,.jpg">
-                @error('images')
-                <p>{{ $message }}</p>    
-                @enderror
-                <label class="flex items-center">
-                <input type="checkbox" name="activated" value="1" class="mr-2"  {{ !$Service->activated ? 'checked' : '' }}>
-                desativar serviço?
-                </label>
+                    
+                    @error('categories')
+                    <p>{{ $message }}</p>    
+                    @enderror
+            
+                    <input type="file" name="images[]" multiple accept=".jpeg,.png,.jpg">
+                    @error('images')
+                    <p>{{ $message }}</p>    
+                    @enderror
+                    <label class="flex items-center">
+                    <input type="checkbox" name="activated" value="1" class="mr-2"  {{ !$Service->activated ? 'checked' : '' }}>
+                    desativar serviço?
+                    </label>
 
-                <a href="{{ route('service-update', $Service->id) }}">
-                    <button>
-                        Atualizar serviço
-                    </button>
-                </a>
-            </form>
-        </div>
-    </x-modal>
+                    <a href="{{ route('service-update', $Service->id) }}">
+                        <button>
+                            Atualizar serviço
+                        </button>
+                    </a>
+                </form>
+            </div>
+        </x-modal>
+    @else
+        <x-button class='' id='editar-servico'>Fazer pedido</x-button>
+        <x-modal>
+            <div class="flex items-center justify-between mb-4">
+                <h1 class="text-xl font-semibold text-gray-900">Fazer pedido</h1>
+                <x-jam-close class="cursor-pointer text-gray-500 hover:text-gray-700"  id="close-modal"/>
+            </div>
+
+            <div>
+                <form action="{{ route('order-store') }}" method="POST">
+                    @csrf
+
+                    <input type="text" name="name" placeholder="Titulo" value="{{ old('name') }}"   class=" @error('name') fild_error @enderror">
+                    @error('name')
+                    <p>{{ $message }} </p>    
+                    @enderror
+            
+                    <input type="text" name="description" placeholder="Descrição" value="{{ old('description') }}"  class=" @error('description') fild_error @enderror">
+                    @error('description')
+                    <p>{{ $message }} </p>    
+                    @enderror
+
+                    <input type="hidden" name="service_id" value="{{ $Service->id }}">
+            
+                    <x-button linkto='order-store'>Fazer pedido</x-button>
+                </form>
+            </div>
+        </x-modal> 
     @endif
 
     @endsection

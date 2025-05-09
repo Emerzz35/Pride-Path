@@ -3,6 +3,7 @@
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\OrderController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () { return view('sobre');});
@@ -33,5 +34,9 @@ Route::post('/criar-servico', [ServiceController::class, 'store'])->name('servic
 Route::patch('/servico/{service}', [ServiceController::class, 'update'])->name('service-update');
 Route::get('/servico/{service}',[ServiceController::class,'show'])->name('service-show');
 Route::get('/servicos',[ServiceController::class,'index'])->name('service-index');
+
+Route::post('/fazer-pedido', [OrderController::class, 'store'])->name('order-store');
+Route::get('/meus-pedidos', [OrderController::class, 'list'])->name('order-list');
+Route::get('/minhas-entregas', [OrderController::class, 'received'])->name('order-received');
 
 });
