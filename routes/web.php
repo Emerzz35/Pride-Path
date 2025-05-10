@@ -4,7 +4,10 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\RatingController;
 use Illuminate\Support\Facades\Route;
+
 
 Route::get('/', function () { return view('sobre');});
 
@@ -45,4 +48,13 @@ Route::post('/aceitar', [OrderController::class, 'accept'])->name('order-accept'
 Route::post('/negar', [OrderController::class, 'deny'])->name('order-deny');
 Route::post('/entregar', [OrderController::class, 'comission'])->name('order-comission');
 
+Route::post('/report', [ReportController::class, 'store'])->name('report-store');
+Route::get('/admin/reports', [ReportController::class, 'index'])->name('report-index');
+
+Route::post('/servico/{service}/rate', [RatingController::class, 'store'])->name('service-rate');
+
 });
+
+
+    
+

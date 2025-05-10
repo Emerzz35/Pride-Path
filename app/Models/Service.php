@@ -17,6 +17,18 @@ class Service extends Model
     public function user(): BelongsTo{
         return $this->belongsTo(User::class);
     }
+    public function reports() {
+    return $this->morphMany(Report::class, 'reportable');
+    }
+    public function ratings() {
+    return $this->hasMany(Rating::class);
+    }
+
+    public function averageRating() {
+        return $this->ratings()->avg('rating');
+    }
+
+
 
     protected $fillable = [
         'name',

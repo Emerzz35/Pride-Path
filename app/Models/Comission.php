@@ -11,4 +11,11 @@ class Comission extends Model
         'description',
         'order_id',
     ];
+
+    public function reports() {
+    return $this->morphMany(Report::class, 'reportable');
+    }
+    public function order(){
+       return $this->belongsTo(Order::class);
+    }
 }

@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Service;
 use App\Models\Category;
 use App\Models\ServiceImage;
+use App\Models\Rating;
 
 class ServiceController extends Controller
 {
@@ -73,10 +74,17 @@ class ServiceController extends Controller
         $Services = Service::all();
         $categories = Category::all();
         $serviceCategories = $Service->categories->pluck('id')->toArray();
+
+        $ratings = Rating::with('user')
+        ->where('service_id', $Service->id)
+        ->latest()
+        ->get();
+
         return view('service-show')
             ->with('Service', $Service)
             ->with('categories', $categories)
-            ->with('serviceCategories', $serviceCategories);
+            ->with('serviceCategories', $serviceCategories)
+            ->with('ratings', $ratings);
     }
 
     public function index(Request $request) {

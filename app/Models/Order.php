@@ -21,6 +21,10 @@ class Order extends Model
     public function Comission(){
         return $this->hasMany(Comission::class);
     }
+    public function reports() {
+    return $this->morphMany(Report::class, 'reportable');
+    }
+
 
     protected $fillable = [
         'name',

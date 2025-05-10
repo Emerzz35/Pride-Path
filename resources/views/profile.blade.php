@@ -10,6 +10,24 @@
 <x-button linkto='order-list'>Meus pedidos</x-button>
 <x-button linkto='order-received'>Minhas entregas</x-button>
 <x-button class='' linkto='service-create'>Postar serviço</x-button>
+@else
+  <x-button class='' id='reportar-servico'>Reportar perfil</x-button>
+    <x-modal id="report-modal">
+            <div class="flex items-center justify-between mb-4">
+                <h1 class="text-xl font-semibold text-gray-900">Reportar {{ $User->name }}</h1>
+                <x-jam-close class="cursor-pointer text-gray-500 hover:text-gray-700"  id="close-modal-report"/>
+            </div>
+
+            <div>
+                <form action="{{ route('report-store') }}" method="POST">
+                    @csrf
+                    <input type="hidden" name="type" value="user">
+                    <input type="hidden" name="id" value="{{ $User->id }}">
+                    <textarea name="reason" placeholder="Descreva o motivo" required></textarea>
+                    <button type="submit" class="btn btn-warning">Reportar</button>
+                </form>
+            </div>
+     </x-modal>
 @endif
 
 @if (Auth::id() === $User->id || Auth::user()->isAdmin())
@@ -92,6 +110,23 @@
             boxModal.classList.add('flex')   
         })
         @endif
+        
+    </script>
+     <script>
+        const reportarServico = document.getElementById('reportar-servico')
+        const reportModal = document.getElementById('report-modal') 
+        const closeModalReport = document.getElementById('close-modal-report') 
+         
+        reportarServico.addEventListener('click',()=>{
+            event.preventDefault();
+            reportModal.classList.remove('hidden')
+            reportModal.classList.add('flex')   
+        })
+
+        closeModalReport.addEventListener('click',()=>{
+            reportModal.classList.remove('flex')
+            reportModal.classList.add('hidden')   
+        })
         
     </script>
 @endpush

@@ -63,6 +63,13 @@
                         <input type="hidden" name="order_id" value="{{ $order->id }}">
                         <x-button linkto='order-deny'>Negar pedido</x-button>
                     </form>
+                    <form action="{{ route('report-store') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="type" value="order">
+                        <input type="hidden" name="id" value="{{ $order->id }}">
+                        <textarea name="reason" placeholder="Descreva o motivo" required></textarea>
+                        <button type="submit" class="btn btn-warning">Reportar pedido</button>
+                    </form>
                 @elseif ($order->Status->name == 'em produção')
                     <form action="{{ route('order-comission') }}" method="POST">
                         @csrf
@@ -94,6 +101,13 @@
                 @elseif ($order->Status->name == 'entregue')    
                     {{ $order->Comission->first()->name }}
                     {{ $order->Comission->first()->description }}
+                    <form action="{{ route('report-store') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="type" value="comission">
+                        <input type="hidden" name="id" value="{{ $order->Comission->first()->id }}">
+                        <textarea name="reason" placeholder="Descreva o motivo" required></textarea>
+                        <button type="submit" class="btn btn-warning">Reportar entrega</button>
+                    </form>
                 @endif
             @endif 
         </div>
