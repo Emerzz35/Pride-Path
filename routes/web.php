@@ -27,6 +27,7 @@ Route::get('/profile/{user}', [UserController::class, 'show'])->name('profile');
 Route::patch('/profile', [UserController::class, 'updateImage'])->name('user-updateImage');
 Route::get('/profile-edit', [UserController::class, 'edit'])->name('user-edit');
 Route::patch('/profile-edit', [UserController::class, 'update'])->name('user-update');
+Route::delete('/profile/{id}', [UserController::class, 'destroy'])->name('user-destroy');
 
 
 Route::get('/criar-servico', [ServiceController::class, 'create'])->name('service-create');

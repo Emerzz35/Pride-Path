@@ -184,8 +184,30 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
-    {
-        //
+   /**
+ * Remove the specified resource from storage.
+ */
+public function destroy(string $id)
+{
+    $user = User::find($id);
+
+    if (!$user) {
+        return redirect()->back()->with('error', 'Usuário não encontrado.');
     }
+
+    // Se quiser garantir que apenas o próprio usuário ou um admin possa excluir:
+    if (Auth::id() !== $user->id && !Auth::user()->isAdmin()) {
+        return redirect()->back()->with('error', 'Você não tem permissão para excluir este usuário.');
+    }
+
+    $user->delete();
+
+    // Se o usuário deletado for o mesmo que está logado, faz logout
+    if (Auth::id() === $user->id) {
+        Auth::logout();
+    }
+
+    return redirect()->route('login')->with('success', 'Usuário deletado com sucesso.');
+}
+
 }

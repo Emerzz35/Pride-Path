@@ -2,6 +2,24 @@
 
 @section('content')
 
+<form method="GET" action=" {{ url()->current() }}">
+    <label for="search">Pesquisar:</label>
+    <input type="text" name="search" id="search" value="{{ request('search') }}">
+
+    <label for="status">Filtrar por status:</label>
+    <select name="status" id="status">
+        <option value="">Todos os status</option>
+        @foreach ($statuses as $status)
+            <option value="{{ $status->id }}" {{ request('status') == $status->id ? 'selected' : '' }}>
+                {{ $status->name }}
+            </option>
+        @endforeach
+    </select>
+
+    <button type="submit">Buscar</button>
+</form>
+
+
 @foreach ($orders as $order)
 <div class="order" data-modal-id="{{ $order->id }}">
     {{ $order->name }}

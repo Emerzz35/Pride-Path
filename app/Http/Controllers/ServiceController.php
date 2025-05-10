@@ -65,6 +65,8 @@ class ServiceController extends Controller
             }
         }
 
+        return redirect()->route('service-show', $service->id);
+
     }
 
     public function show(Service $Service){

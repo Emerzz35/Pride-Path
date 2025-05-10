@@ -39,6 +39,12 @@ class User extends Authenticatable
         'image'
     ];
 
+    public function isAdmin()
+    {
+        return $this->is_admin;
+    }
+    
+
     public function state()
     {
         return $this->belongsTo(State::class);

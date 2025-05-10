@@ -1,6 +1,8 @@
 <header>
 
     @auth
+    <x-button class='' linkto='service-create'>Postar serviço</x-button>
+    <x-button class='' linkto='service-index'>home</x-button>
         <div class="menu_profile"> 
                 <div class="user_picture"> <img src="/img/profile/{{ auth()->user()->image }}"></div>
             

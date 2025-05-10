@@ -15,13 +15,9 @@
     {{$category->name}}
     @endforeach
 
-    {{ $Service->user->name }}
+    <a href="/profile/{{  $Service->user_id }}}">{{ $Service->user->name }}</a>
 
-
-
-
-
-
+    
 
     @if ( $Service->user->id === Auth()->user()->id)
         <x-button class='' id='editar-servico'>Editar Serviço</x-button>

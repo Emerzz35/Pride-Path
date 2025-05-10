@@ -9,21 +9,33 @@
 <x-button linkto='user-edit'>Editar perfil</x-button>
 <x-button linkto='order-list'>Meus pedidos</x-button>
 <x-button linkto='order-received'>Minhas entregas</x-button>
+<x-button class='' linkto='service-create'>Postar serviço</x-button>
 @endif
+
+@if (Auth::id() === $User->id || Auth::user()->isAdmin())
+    <form action="{{ route('user-destroy', $User->id) }}" method="POST" onsubmit="return confirm('Tem certeza que deseja excluir este usuário?');">
+        @csrf
+        @method('DELETE')
+        <button type="submit" class="">Excluir</button>
+    </form>
+@endif
+
 
 
 {{-- Servicos --}}
 
 
 @foreach ($User->Service as  $service)
+    @if ($service->activated == true or $User->id === Auth()->user()->id) 
+        
 
-    <a href="{{ route('service-show', $service->id) }}">
-        <img src="/{{ $service->ServiceImage->first()->url }}">  
-        {{$service->name}}
-        {{$service->description }}
-        {{$service->price}}
-    </a>
-    
+        <a href="{{ route('service-show', $service->id) }}">
+            <img src="/{{ $service->ServiceImage->first()->url }}">  
+            {{$service->name}}
+            {{$service->description }}
+            {{$service->price}}
+        </a>
+    @endif
 @endforeach
 
 

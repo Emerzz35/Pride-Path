@@ -34,27 +34,76 @@ class OrderController extends Controller
         ]);
         return back()->with('success', 'pedido feito com sucesso!');
     }
-    public function list(){
-
+    public function list(Request $request) {
         $userId = Auth::user()->id;
-        $orders = Order::all()
-        ->where('user_id', $userId);
+    
+        $orders = Order::select('orders.*')
+            ->join('statuses', 'orders.statuses_id', '=', 'statuses.id')
+            ->where('orders.user_id', $userId)
+            ->when($request->filled('search'), function ($query) use ($request) {
+                $searchTerm = $request->search;
+                $query->where(function ($q) use ($searchTerm) {
+                    $q->where('orders.name', 'like', "%$searchTerm%")
+                      ->orWhere('orders.description', 'like', "%$searchTerm%")
+                      ->orWhereHas('service', function ($serviceQuery) use ($searchTerm) {
+                          $serviceQuery->where('name', 'like', "%$searchTerm%");
+                      });
+                });
+            })
+            ->when($request->filled('status'), function ($query) use ($request) {
+                $query->where('orders.statuses_id', $request->status);
+            })
+            ->orderByRaw("CASE statuses.name
+                WHEN 'em produção' THEN 1
+                WHEN 'em analise' THEN 2
+                WHEN 'entregue' THEN 3
+                WHEN 'negado' THEN 4
+                ELSE 5 END")
+            ->orderBy('orders.created_at', 'desc')
+            ->get();
+    
         $statuses = Status::all();
-
+    
         return view('order-list', compact('orders', 'statuses'));
     }
-    public function received(){
-
+    
+    
+    public function received(Request $request) {
         $userId = Auth::user()->id;
-
-        $orders = Order::whereHas('service', function ($query) use ($userId) {
-        $query->where('user_id', $userId);
-        })->get();
-
+    
+        $orders = Order::select('orders.*')
+            ->join('statuses', 'orders.statuses_id', '=', 'statuses.id')
+            ->whereHas('service', function ($query) use ($userId) {
+                $query->where('user_id', $userId);
+            })
+            ->when($request->filled('search'), function ($query) use ($request) {
+                $searchTerm = $request->search;
+                $query->where(function ($q) use ($searchTerm) {
+                    $q->where('orders.name', 'like', "%$searchTerm%")
+                      ->orWhere('orders.description', 'like', "%$searchTerm%")
+                      ->orWhereHas('service', function ($serviceQuery) use ($searchTerm) {
+                          $serviceQuery->where('name', 'like', "%$searchTerm%");
+                      });
+                });
+            })
+            ->when($request->filled('status'), function ($query) use ($request) {
+                $query->where('orders.statuses_id', $request->status);
+            })
+            ->orderByRaw("CASE statuses.name
+                WHEN 'em analise' THEN 1
+                WHEN 'em produção' THEN 2
+                WHEN 'entregue' THEN 3
+                WHEN 'negado' THEN 4
+                ELSE 5 END")
+            ->orderBy('orders.created_at', 'desc')
+            ->get();
+    
         $statuses = Status::all();
-
+    
         return view('order-list', compact('orders', 'statuses'));
     }
+    
+    
     public function accept(Request $request){
 
         $status = Status::where('name', 'em produção')->first(); 
