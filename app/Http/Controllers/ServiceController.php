@@ -170,5 +170,33 @@ class ServiceController extends Controller
         }
         
         return back()->with('success', 'Serviço atualizado com sucesso!');
-    }        
+    }
+    
+    public function destroy(Service $service)
+    {
+    $currentUser = Auth::user();
+
+    // Permitir apagar apenas se for dono OU admin
+    if ($currentUser->id !== $service->user_id && !$currentUser->isAdmin()) {
+        return redirect()->back()->with('error', 'Você não tem permissão para excluir este serviço.');
+    }
+
+    // Apagar imagens do disco
+    foreach ($service->ServiceImage as $img) {
+        $imagePath = public_path($img->url);
+        if (file_exists($imagePath)) {
+            unlink($imagePath);
+        }
+    }
+
+    // Apagar relações no banco
+    $service->ServiceImage()->delete();
+    $service->categories()->detach();
+
+    // Apagar o próprio serviço
+    $service->delete();
+
+    return redirect()->route('service-index')->with('success', 'Serviço excluído com sucesso.');
+    }
+
 }

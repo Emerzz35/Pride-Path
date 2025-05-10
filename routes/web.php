@@ -35,6 +35,8 @@ Route::post('/criar-servico', [ServiceController::class, 'store'])->name('servic
 Route::patch('/servico/{service}', [ServiceController::class, 'update'])->name('service-update');
 Route::get('/servico/{service}',[ServiceController::class,'show'])->name('service-show');
 Route::get('/servicos',[ServiceController::class,'index'])->name('service-index');
+Route::delete('/services/{service}', [ServiceController::class, 'destroy'])->name('service-destroy');
+
 
 Route::post('/fazer-pedido', [OrderController::class, 'store'])->name('order-store');
 Route::get('/meus-pedidos', [OrderController::class, 'list'])->name('order-list');

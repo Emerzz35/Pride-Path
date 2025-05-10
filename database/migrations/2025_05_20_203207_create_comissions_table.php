@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('comissions', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->foreignId('order_id')->constrained();
+            $table->foreignId('order_id')->constrained()->onDelete('cascade');
             $table->string('name',200);
             $table->string('description',500);
         });

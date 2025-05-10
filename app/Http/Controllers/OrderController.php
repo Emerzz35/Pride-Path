@@ -148,6 +148,6 @@ class OrderController extends Controller
             'statuses_id' => $status->id,
         ]);
 
-        return back()->with('success', 'pedido feito com sucesso!');
+        return back()->with('success', 'pedido entregue com sucesso!');
     }
 }

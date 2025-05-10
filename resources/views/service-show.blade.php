@@ -110,6 +110,14 @@
         </x-modal> 
     @endif
 
+    @if (Auth::id() === $Service->user_id || Auth::user()->isAdmin())
+        <form action="{{ route('service-destroy', $Service->id) }}" method="POST" onsubmit="return confirm('Tem certeza que deseja excluir este serviço?');">
+            @csrf
+            @method('DELETE')
+            <button type="submit" class="btn btn-danger">Excluir Serviço</button>
+        </form>
+    @endif
+
     @endsection
 @endif
 
