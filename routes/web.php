@@ -38,5 +38,8 @@ Route::get('/servicos',[ServiceController::class,'index'])->name('service-index'
 Route::post('/fazer-pedido', [OrderController::class, 'store'])->name('order-store');
 Route::get('/meus-pedidos', [OrderController::class, 'list'])->name('order-list');
 Route::get('/minhas-entregas', [OrderController::class, 'received'])->name('order-received');
+Route::post('/aceitar', [OrderController::class, 'accept'])->name('order-accept');
+Route::post('/negar', [OrderController::class, 'deny'])->name('order-deny');
+Route::post('/entregar', [OrderController::class, 'comission'])->name('order-comission');
 
 });

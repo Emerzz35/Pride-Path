@@ -16,7 +16,8 @@ class StatusSeeder extends Seeder
         DB::table('statuses')->insert([
             ['name' => 'em analise'],
             ['name' => 'em produção'],
-            ['name' => 'entregue']
+            ['name' => 'entregue'],
+            ['name' => 'negado']
         ]);
     }
 }

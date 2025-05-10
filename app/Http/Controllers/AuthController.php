@@ -10,7 +10,8 @@ class AuthController extends Controller
 {
    public function index(){
     if (Auth::user()){
-        return Redirect('profile');
+        $userId = Auth::User()->id;
+        return redirect()->route('profile', $userId);
     }
     return view('user-login');
    }

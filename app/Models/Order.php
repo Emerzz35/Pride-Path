@@ -18,6 +18,9 @@ class Order extends Model
     public function Service(): BelongsTo{
         return $this->belongsTo(Service::class);
     }
+    public function Comission(){
+        return $this->hasMany(Comission::class);
+    }
 
     protected $fillable = [
         'name',

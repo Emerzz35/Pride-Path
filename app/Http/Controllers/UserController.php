@@ -22,6 +22,11 @@ class UserController extends Controller
 
     public function create(Request $request)
     {
+
+        if (Auth::user()){
+            $userId = Auth::User()->id;
+            return redirect()->route('profile', $userId);
+        }
         $tipo = $request->input('tipo', 'pf');
         $states = State::all();
         return view('user-create', compact('tipo'),  compact('states'));
