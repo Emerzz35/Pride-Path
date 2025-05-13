@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
-
+@auth
+    
 @if ($Service->activated == 1 or $Service->user->id === Auth()->user()->id)
     @section('content')
     {{ $Service->name }}

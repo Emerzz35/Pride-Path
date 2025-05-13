@@ -9,12 +9,14 @@ use App\Http\Controllers\RatingController;
 use Illuminate\Support\Facades\Route;
 
 
-Route::get('/', function () { return view('sobre');});
+//Route::get('/', function () { return view('sobre');});
 
 Route::get('/criar-conta', [UserController::class, 'create'])->name('user-create');
 Route::post('/criar-conta', [UserController::class, 'store'])->name('user-insert');
 Route::get('/login', [AuthController::class, 'index'])->name('login');
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
+
+Route::get('/',[ServiceController::class,'index'])->name('service-index');
 
 Route::middleware(['throttle:login-attempts'])->group(function () {
 Route::post('/login', [AuthController::class, 'loginAtttempt'])->name('auth');
@@ -36,9 +38,8 @@ Route::delete('/profile/{id}', [UserController::class, 'destroy'])->name('user-d
 Route::get('/criar-servico', [ServiceController::class, 'create'])->name('service-create');
 Route::post('/criar-servico', [ServiceController::class, 'store'])->name('service-store');
 Route::patch('/servico/{service}', [ServiceController::class, 'update'])->name('service-update');
-Route::get('/servico/{service}',[ServiceController::class,'show'])->name('service-show');
-Route::get('/servicos',[ServiceController::class,'index'])->name('service-index');
 Route::delete('/services/{service}', [ServiceController::class, 'destroy'])->name('service-destroy');
+Route::get('/servico/{service}',[ServiceController::class,'show'])->name('service-show');
 
 
 Route::post('/fazer-pedido', [OrderController::class, 'store'])->name('order-store');
