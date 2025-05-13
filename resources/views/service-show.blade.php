@@ -151,7 +151,7 @@
             </div>
         </x-modal> 
 
-        @if ($ratings)
+        @if (! $ratingExists)
         <form id="rating-form" action="{{ route('service-rate', $Service->id) }}" method="POST" class="space-y-4">
             @csrf
             <input type="hidden" name="rating" id="rating-value">
