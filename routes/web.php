@@ -50,8 +50,11 @@ Route::post('/entregar', [OrderController::class, 'comission'])->name('order-com
 
 Route::post('/report', [ReportController::class, 'store'])->name('report-store');
 Route::get('/admin/reports', [ReportController::class, 'index'])->name('report-index');
+Route::delete('/reports/{id}', [ReportController::class, 'destroy'])->name('report-destroy');
+
 
 Route::post('/servico/{service}/rate', [RatingController::class, 'store'])->name('service-rate');
+Route::delete('/services/{serviceId}/rating/{userId?}', [RatingController::class, 'destroy'])->name('rating-destroy');
 
 });
 

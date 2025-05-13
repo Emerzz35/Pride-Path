@@ -14,9 +14,25 @@ class UserController extends Controller
      * Display a listing of the resource.
      */
     public function show(User $User){
+
         $Users = User::all();
+
+
+        $services = $User->Service()->with('ratings')->get();
+
+        // Calcula a média de cada serviço e depois a média geral
+        $serviceAverages = $services->map(function ($service) {
+            return $service->ratings->avg('rating');
+        })->filter(); // Remove nulos (serviços sem avaliação)
+
+        $overallAverage = $serviceAverages->count() > 0 
+            ? round($serviceAverages->avg(), 2)
+            : null;
+
+
         return view('profile')
-        ->with('User', $User);
+        ->with('User', $User)
+        ->with('overallAverage', $overallAverage);
     
     }
 

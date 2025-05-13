@@ -4,6 +4,64 @@
 <img src="/img/profile/{{ $User->image }}" @if ($User->id === Auth()->user()->id) id='profile-picture'  @endif >
 
 <p>{{ $User->name }}</p>
+<div class="mb-6">
+    <h2 class="text-lg font-bold">Média Geral das Avaliações</h2>
+
+    @if ($overallAverage)
+        @php
+            $fullStars = floor($overallAverage);
+            $decimal = $overallAverage - $fullStars;
+            $halfStar = $decimal >= 0.25 && $decimal < 0.75;
+            $almostFull = $decimal >= 0.75;
+            $emptyStars = 5 - $fullStars - ($halfStar || $almostFull ? 1 : 0);
+        @endphp
+
+        <div class="flex items-center mt-2 text-yellow-400">
+            {{-- Estrelas cheias --}}
+            @for ($i = 0; $i < $fullStars; $i++)
+                <svg class="w-6 h-6 fill-current" viewBox="0 0 20 20">
+                    <path d="M10 15l-5.878 3.09 1.122-6.545L.488 6.91l6.562-.955L10 0l2.95 5.955 6.562.955-4.756 4.635 1.122 6.545z"/>
+                </svg>
+            @endfor
+
+            {{-- Estrela quase cheia --}}
+            @if ($almostFull)
+                <svg class="w-6 h-6" viewBox="0 0 20 20">
+                    <defs>
+                        <linearGradient id="star90">
+                            <stop offset="90%" stop-color="currentColor"/>
+                            <stop offset="90%" stop-color="transparent"/>
+                        </linearGradient>
+                    </defs>
+                    <path fill="url(#star90)" d="M10 15l-5.878 3.09 1.122-6.545L.488 6.91l6.562-.955L10 0l2.95 5.955 6.562.955-4.756 4.635 1.122 6.545z"/>
+                </svg>
+            @elseif ($halfStar)
+                <svg class="w-6 h-6" viewBox="0 0 20 20">
+                    <defs>
+                        <linearGradient id="halfGrad">
+                            <stop offset="50%" stop-color="currentColor" />
+                            <stop offset="50%" stop-color="transparent" />
+                        </linearGradient>
+                    </defs>
+                    <path fill="url(#halfGrad)" d="M10 15l-5.878 3.09 1.122-6.545L.488 6.91l6.562-.955L10 0l2.95 5.955 6.562.955-4.756 4.635 1.122 6.545z"/>
+                </svg>
+            @endif
+
+            {{-- Estrelas vazias --}}
+            @for ($i = 0; $i < $emptyStars; $i++)
+                <svg class="w-6 h-6 text-gray-300 fill-current" viewBox="0 0 20 20">
+                    <path d="M10 15l-5.878 3.09 1.122-6.545L.488 6.91l6.562-.955L10 0l2.95 5.955 6.562.955-4.756 4.635 1.122 6.545z"/>
+                </svg>
+            @endfor
+
+            <span class="ml-2 text-gray-700">{{ number_format($overallAverage, 1) }}/5</span>
+        </div>
+    @else
+        <p class="text-gray-500">Este usuário ainda não possui avaliações em seus serviços.</p>
+    @endif
+</div>
+
+
 
 @if ($User->id === Auth()->user()->id) 
 <x-button linkto='user-edit'>Editar perfil</x-button>

@@ -13,6 +13,11 @@ class Rating extends Model
     public function service() {
         return $this->belongsTo(Service::class);
     }
+    
+    public function reports() {
+    return $this->morphMany(Report::class, 'reportable');
+    }
+
     protected $fillable = [
         'comment',
         'rating',

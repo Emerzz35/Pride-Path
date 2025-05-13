@@ -151,7 +151,7 @@
             </div>
         </x-modal> 
 
-
+        @if ($ratings)
         <form id="rating-form" action="{{ route('service-rate', $Service->id) }}" method="POST" class="space-y-4">
             @csrf
             <input type="hidden" name="rating" id="rating-value">
@@ -169,6 +169,7 @@
                 Enviar Avaliação
             </button>
         </form>
+        @endif
 
         <x-button class='' id='reportar-servico'>Reportar serviço</x-button>
         <x-modal id="report-modal">
@@ -208,6 +209,7 @@
             <div class="mb-6 border-b pb-4">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center space-x-2">
+                        <img src="/img/profile/{{$rating->user->image }}" >
                         <span class="font-semibold">{{ $rating->user->name }}</span>
                         <span class="text-sm text-gray-500">{{ $rating->created_at->diffForHumans() }}</span>
                     </div>
@@ -221,6 +223,45 @@
                 </div>
                 @if($rating->comment)
                     <p class="mt-2 text-gray-700">{{ $rating->comment }}</p>
+                @endif
+                @if ($rating->user_id === Auth::id())
+
+                    <form action="{{ route('rating-destroy', ['serviceId' => $Service->id]) }}" method="POST" onsubmit="return confirm('Deseja excluir sua avaliação?');">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit">Excluir Minha Avaliação</button>
+                    </form>
+                @else
+                {{-- Reportar avaliação --}}
+
+                <x-button class='' id='reportar-rating'>Reportar Avaliação</x-button>
+                    <x-modal id="report-rating-modal">
+                        <div class="flex items-center justify-between mb-4">
+                            <h1 class="text-xl font-semibold text-gray-900">Reportar Avaliação</h1>
+                            <x-jam-close class="cursor-pointer text-gray-500 hover:text-gray-700"  id="close-modal-report-rating"/>
+                        </div>
+
+                        <div>
+                            <form action="{{ route('report-store') }}" method="POST">
+                                @csrf
+                                <input type="hidden" name="type" value="rating">
+                                <input type="hidden" name="id" value="{{ $rating->id }}">
+                                <textarea name="reason" placeholder="Descreva o motivo" required></textarea>
+                                <button type="submit" class="btn btn-warning">Reportar Avaliação</button>
+                            </form>
+                        </div>
+                    </x-modal>
+                
+
+                @endif
+
+                @if (Auth::user()->isAdmin())
+                    
+                    <form action="{{ route('rating-destroy', ['serviceId' => $rating->service_id, 'userId' => $rating->user_id]) }}" method="POST" onsubmit="return confirm('Deseja excluir esta avaliação?');">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit">Excluir Avaliação</button>
+                    </form>
                 @endif
             </div>
         @empty
@@ -264,6 +305,23 @@
         closeModalReport.addEventListener('click',()=>{
             reportModal.classList.remove('flex')
             reportModal.classList.add('hidden')   
+        })
+        
+    </script>
+    <script>
+        const reportarRating = document.getElementById('reportar-rating')
+        const reportModalRating = document.getElementById('report-rating-modal') 
+        const closeModalReportRating = document.getElementById('close-modal-report-rating') 
+         
+        reportarRating.addEventListener('click',()=>{
+            event.preventDefault();
+            reportModalRating.classList.remove('hidden')
+            reportModalRating.classList.add('flex')   
+        })
+
+        closeModalReportRating.addEventListener('click',()=>{
+            reportModalRating.classList.remove('flex')
+            reportModalRating.classList.add('hidden')   
         })
         
     </script>
