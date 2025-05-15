@@ -1,43 +1,118 @@
-<input type="text" name="cep" onkeyup="formatarcep(this)" placeholder="CEP: 00000-000" maxlength="8" @guest value="{{ old('cep') }}" @endguest @auth value="{{ auth()->user()->cep }}" @endauth class=" @error('cep') fild_error @enderror">   
- {{-- A classe "fild_error" é adicionada quando o usuario não preenche o campo corretamente, usa ela pra estilizar --}}
-@error('cep')
-    <p>{{ $message }} </p>    
-@enderror
-<input type="text" name="address_street" placeholder="address_street" @guest value="{{ old('address_street') }}" @endguest @auth value="{{ auth()->user()->address_street }}" @endauth class=" @error('address_street') fild_error @enderror">   
-@error('address_street')
-    <p>{{ $message }} </p>    
-@enderror
-<input type="text" name="address_number" placeholder="address_number" @guest value="{{ old('address_number') }}" @endguest @auth value="{{ auth()->user()->address_number }}" @endauth class=" @error('address_number') fild_error @enderror">   
-@error('address_number')
-    <p>{{ $message }} </p>    
-@enderror
-<input type="text" name="address_complement" placeholder="address_complement" @guest value="{{ old('address_complement') }}" @endguest @auth value="{{ auth()->user()->address_complement }}" @endauth class=" @error('address_complement') fild_error @enderror">   
-@error('address_complement')
-    <p>{{ $message }} </p>    
-@enderror
-<input type="text" name="address_city" placeholder="address_city" @guest value="{{ old('address_city') }}" @endguest @auth value="{{ auth()->user()->address_city }}" @endauth class=" @error('address_city') fild_error @enderror">   
-@error('address_city')
-    <p>{{ $message }} </p>    
-@enderror
-<select name="state_id" id="state_id" class=" @error('state_id') fild_error @enderror">
-    <option value="">Selecione um estado</option>
-    @foreach ($states as $state)
-        <option value="{{ $state->id }}"
-            {{ (old('state_id') ?? (auth()->check() ? auth()->user()->state_id : null)) == $state->id ? 'selected' : '' }}>
-            {{ $state->name }}
-        </option>
+<div class="space-y-4">
+    <div class="grid grid-cols-2 gap-4">
+        <div>
+            <label for="cep" class="block text-sm font-medium text-titulo mb-1">CEP</label>
+            <input 
+                type="text" 
+                name="cep" 
+                id="cep" 
+                placeholder="00000-000" 
+                value="{{ old('cep', Auth::user()->cep) }}"
+                class="w-full bg-input rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-destaque"
+                required
+            >
+            @error('cep')
+                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>    
+            @enderror
+        </div>
+        <div>
+            <label for="state_id" class="block text-sm font-medium text-titulo mb-1">Estado</label>
+            <select 
+                name="state_id" 
+                id="state_id" 
+                class="w-full bg-input rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-destaque appearance-none"
+                required
+            >
+                <option value="">Selecione um estado</option>
+                @foreach($states as $state)
+                    <option value="{{ $state->id }}" {{ (Auth::check() && Auth::user()->state_id == $state->id) || old('state_id') == $state->id ? 'selected' : '' }}>
+                        {{ $state->name }}
+                    </option>
+                @endforeach
+            </select>
+            @error('state_id')
+                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>    
+            @enderror
+        </div>
+    </div>
     
-    @endforeach
-</select>
-@error('state_id')
-    <p>{{ $message }} </p>    
-@enderror
-@push('scripts')
-<script>
-    function formatarcep(input) {
-    var cep = input.value.replace(/\D/g, '');
-    cep = cep.replace(/(\d{5})(\d{3})/, '$1-$2');
-    input.value = cep;
-  }
-</script>   
-@endpush
+    <div>
+        <label for="address_city" class="block text-sm font-medium text-titulo mb-1">Cidade</label>
+        <input 
+            type="text" 
+            name="address_city" 
+            id="address_city" 
+            placeholder="Digite sua cidade" 
+            value="{{ old('address_city', Auth::user()->address_city) }}"
+            class="w-full bg-input rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-destaque"
+            required
+        >
+        @error('address_city')
+            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>    
+        @enderror
+    </div>
+    
+    <div>
+        <label for="neighborhood" class="block text-sm font-medium text-titulo mb-1">Bairro</label>
+        <input 
+            type="text" 
+            name="neighborhood" 
+            id="neighborhood" 
+            placeholder="Digite seu bairro" 
+            value="{{ old('neighborhood', Auth::user()->neighborhood) }}"
+            class="w-full bg-input rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-destaque"
+            required
+        >
+        @error('neighborhood')
+            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>    
+        @enderror
+    </div>
+    
+    <div>
+        <label for="address_street" class="block text-sm font-medium text-titulo mb-1">Rua</label>
+        <input 
+            type="text" 
+            name="address_street" 
+            id="address_street" 
+            placeholder="Digite sua rua" 
+            value="{{ old('address_street', Auth::user()->address_street) }}"
+            class="w-full bg-input rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-destaque"
+            required
+        >
+        @error('address_street')
+            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>    
+        @enderror
+    </div>
+    
+    <div class="grid grid-cols-2 gap-4">
+        <div>
+            <label for="address_number" class="block text-sm font-medium text-titulo mb-1">Número</label>
+            <input 
+                type="text" 
+                name="address_number" 
+                id="address_number" 
+                placeholder="Nº" 
+                value="{{ old('address_number', Auth::user()->address_number) }}"
+                class="w-full bg-input rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-destaque"
+                required
+            >
+            @error('address_number')
+                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>    
+            @enderror
+        </div>
+        <div>
+            <label for="address_complement" class="block text-sm font-medium text-titulo mb-1">Complemento</label>
+            <input 
+                type="text" 
+                name="address_complement" 
+                id="address_complement" 
+                placeholder="Apto, bloco, etc." 
+                value="{{ old('address_complement', Auth::user()->address_complement) }}"
+                class="w-full bg-input rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-destaque"
+            >
+            @error('address_complement')
+                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>    
+            @enderror
+        </div>
+    </div>
+</div>
