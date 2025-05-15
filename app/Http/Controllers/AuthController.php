@@ -28,7 +28,7 @@ class AuthController extends Controller
         $request->session()->regenerate();
 
         $userId = Auth::User()->id;
-        return redirect()->route('profile', $userId);
+        return redirect()->route('service-index');
     }
 
         return back()->withInput()->with('status', 'Login invalido');
