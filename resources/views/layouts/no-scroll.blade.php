@@ -6,7 +6,7 @@
         @vite('resources/css/app.css')
         <title>Pride Path</title>
     </head>
-    <body class="bg-fundo min-h-screen">
+    <body class="bg-fundo min-h-screen overflow-hidden">
         {{-- Setup padrão para todas as paginas --}}
         @include('components.header')
         @if(session('success'))
