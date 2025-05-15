@@ -1,4 +1,4 @@
-@extends('layouts.no-scroll')
+@extends('layouts.app')
 
 @section('content')
 {{-- Fazer a pagina aqui --}}
