@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Service;
 use App\Models\Rating;
 use App\Models\Order;
+use App\Models\Notification;
 
 class RatingController extends Controller
 {
@@ -34,6 +35,12 @@ class RatingController extends Controller
             ['user_id' => $user->id, 'service_id' => $service->id],
             ['rating' => $validated['rating'], 'comment' => $validated['comment']]
         );
+        Notification::create([
+            'user_id' => $service->user_id,
+            'content' => "Seu serviço '{$service->name}' recebeu uma avaliação de {$validated['rating']} estrelas",
+            'link' => "/servico/{$service->id}",
+            'type' => Notification::TYPE_RATING
+        ]);
 
         return back()->with('success', 'Avaliação registrada com sucesso!');
     }

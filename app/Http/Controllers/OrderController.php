@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Order;
 use App\Models\Status;
 use App\Models\Service;
+use App\Models\Notification;
 
 class OrderController extends Controller
 {
@@ -32,6 +33,14 @@ class OrderController extends Controller
             'user_id' => $userId,
             'statuses_id' => $status->id,
         ]);
+
+        Notification::create([
+            'user_id' => $service->user_id,
+            'content' => "Novo pedido para seu serviço '{$service->name}'",
+            'link' => "/minhas-entregas?status={$status->id}",
+            'type' => Notification::TYPE_ORDER
+        ]);
+
         return back()->with('success', 'pedido feito com sucesso!');
     }
     public function list(Request $request) {
@@ -146,6 +155,13 @@ class OrderController extends Controller
 
         $order->update([
             'statuses_id' => $status->id,
+        ]);
+
+         Notification::create([
+            'user_id' => $order->user_id,
+            'content' => "Seu pedido '{$order->name}' foi entregue",
+            'link' => "/meus-pedidos?status={$status->id}",
+            'type' => Notification::TYPE_COMISSION
         ]);
 
         return back()->with('success', 'pedido entregue com sucesso!');

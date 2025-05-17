@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RatingController;
+use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -62,5 +63,9 @@ Route::delete('/reports/{id}', [ReportController::class, 'destroy'])->name('repo
 
 Route::post('/servico/{service}/rate', [RatingController::class, 'store'])->name('service-rate');
 Route::delete('/services/{serviceId}/rating/{userId?}', [RatingController::class, 'destroy'])->name('rating-destroy');
+
+Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.read-all');
 
 });
