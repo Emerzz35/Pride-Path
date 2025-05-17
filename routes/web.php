@@ -22,6 +22,12 @@ Route::middleware(['throttle:login-attempts'])->group(function () {
 Route::post('/login', [AuthController::class, 'loginAtttempt'])->name('auth');
 });
 
+// Add these routes after the login routes but before the auth middleware group
+Route::get('/forgot-password', [AuthController::class, 'forgotPassword'])->name('password.request');
+Route::post('/forgot-password', [AuthController::class, 'sendResetLink'])->name('password.email');
+Route::get('/reset-password/{token}', [AuthController::class, 'resetPassword'])->name('password.reset');
+Route::post('/reset-password', [AuthController::class, 'updatePassword'])->name('password.update');
+
 
 
 
@@ -58,7 +64,3 @@ Route::post('/servico/{service}/rate', [RatingController::class, 'store'])->name
 Route::delete('/services/{serviceId}/rating/{userId?}', [RatingController::class, 'destroy'])->name('rating-destroy');
 
 });
-
-
-    
-
