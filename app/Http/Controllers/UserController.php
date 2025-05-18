@@ -3,11 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\EmailVerification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Models\State;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Mail;
+use Carbon\Carbon;
+use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
@@ -37,36 +41,35 @@ class UserController extends Controller
     
     }
 
-// Vamos modificar o método create para garantir que a variável $tipo seja passada corretamente
-// e tenha um valor padrão adequado
+    // Vamos modificar o método create para garantir que a variável $tipo seja passada corretamente
+    // e tenha um valor padrão adequado
 
-public function create(Request $request)
-{
-    if (Auth::user()){
-        $userId = Auth::User()->id;
-        return redirect()->route('profile', $userId);
+    public function create(Request $request)
+    {
+        if (Auth::user()){
+            $userId = Auth::User()->id;
+            return redirect()->route('profile', $userId);
+        }
+        
+        // Definir o tipo padrão como 'pf' se não for especificado
+        $tipo = $request->input('tipo', 'pf');
+        
+        // Garantir que o tipo seja válido (pf ou pj) e seja uma string
+        if (!in_array($tipo, ['pf', 'pj'])) {
+            $tipo = 'pf';
+        }
+        
+        // Depuração para verificar o valor de $tipo
+        // dd($tipo); // Descomente esta linha para verificar o valor
+        
+        $states = State::all();
+        
+        // Passar a variável $tipo explicitamente para a view
+        return view('user-create', [
+            'tipo' => $tipo,
+            'states' => $states
+        ]);
     }
-    
-    // Definir o tipo padrão como 'pf' se não for especificado
-    $tipo = $request->input('tipo', 'pf');
-    
-    // Garantir que o tipo seja válido (pf ou pj) e seja uma string
-    if (!in_array($tipo, ['pf', 'pj'])) {
-        $tipo = 'pf';
-    }
-    
-    // Depuração para verificar o valor de $tipo
-    // dd($tipo); // Descomente esta linha para verificar o valor
-    
-    $states = State::all();
-    
-    // Passar a variável $tipo explicitamente para a view
-    return view('user-create', [
-        'tipo' => $tipo,
-        'states' => $states
-    ]);
-}
-
 
     public function store(Request $request, User $user)
     {
@@ -84,7 +87,7 @@ public function create(Request $request)
             }
         }
         
-        //  dd($request);
+        // Validação dos dados
         if ($request->user_type === 'pf') {
             $validated = $request->validate([
                 'name' => 'required|min:5|max:200',
@@ -117,20 +120,152 @@ public function create(Request $request)
                 'responsable' => 'required|min:5|max:200',
             ]);
         }
-       
+        
+        // Verificar a força da senha
         $strongPassword = $user->validatePassword($validated['password']);
-       
-        $user = $user->fill($validated);
-        $user->password = Hash::make($strongPassword);
+        
+        // Gerar código de verificação
+        $verificationCode = mt_rand(100000, 999999);
+        
+        // Preparar dados do usuário para armazenamento temporário
+        $userData = $validated;
+        $userData['password'] = Hash::make($strongPassword);
         if ($request->user_type === 'pj') {
-            $user->name = $request->corporate_reason;
+            $userData['name'] = $request->corporate_reason;
         }
-        $user->save();
-        Auth::login($user);
-        session()->flash('show_modal', true);
-        return redirect(route('profile', $user->id));
+        
+        // Remover confirmações de email e senha dos dados armazenados
+        unset($userData['email_confirmation']);
+        unset($userData['password_confirmation']);
+        
+        // Adicionar o tipo de usuário aos dados
+        $userData['user_type'] = $request->user_type;
+        
+        // Armazenar os dados temporariamente
+        // Primeiro, excluir qualquer verificação anterior para este email
+        EmailVerification::where('email', $validated['email'])->delete();
+        
+        // Criar nova verificação
+        EmailVerification::create([
+            'email' => $validated['email'],
+            'verification_code' => $verificationCode,
+            'user_data' => $userData,
+            'expires_at' => Carbon::now()->addMinutes(30)
+        ]);
+        
+        // Enviar email com código de verificação
+        try {
+            Mail::send('emails.verification-code', ['verificationCode' => $verificationCode], function ($message) use ($validated) {
+                $message->to($validated['email'])
+                        ->subject('Verificação de Email - Pride Path');
+            });
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Não foi possível enviar o email de verificação. Por favor, tente novamente.');
+        }
+        
+        // Redirecionar para a página de verificação
+        return redirect()->route('verify.email.form', ['email' => $validated['email']]);
     }
 
+    /**
+     * Exibe o formulário de verificação de email.
+     */
+    public function showVerificationForm(Request $request)
+    {
+        $email = $request->email;
+        
+        // Verificar se existe uma verificação pendente para este email
+        $verification = EmailVerification::where('email', $email)->first();
+        
+        if (!$verification) {
+            return redirect()->route('user-create')->with('error', 'Nenhuma verificação pendente encontrada para este email.');
+        }
+        
+        return view('auth.verify-email', ['email' => $email]);
+    }
+
+    /**
+     * Verifica o código e cria o usuário.
+     */
+    public function verifyEmail(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'verification_code' => 'required|string'
+        ]);
+        
+        $verification = EmailVerification::where('email', $request->email)->first();
+        
+        if (!$verification) {
+            return redirect()->back()->with('error', 'Nenhuma verificação pendente encontrada para este email.');
+        }
+        
+        if ($verification->isExpired()) {
+            $verification->delete();
+            return redirect()->back()->with('error', 'O código de verificação expirou. Por favor, solicite um novo código.');
+        }
+        
+        if ($verification->verification_code !== $request->verification_code) {
+            return redirect()->back()->with('error', 'Código de verificação inválido. Por favor, tente novamente.');
+        }
+        
+        // Código válido, criar o usuário
+        $userData = $verification->user_data;
+        
+        $user = new User();
+        foreach ($userData as $key => $value) {
+            if ($key !== 'user_type') {
+                $user->{$key} = $value;
+            }
+        }
+        
+        $user->save();
+        
+        // Excluir a verificação
+        $verification->delete();
+        
+        // Fazer login automático
+        Auth::login($user);
+        
+        // Redirecionar para o perfil com mensagem de boas-vindas
+        session()->flash('show_modal', true);
+        return redirect()->route('profile', $user->id)->with('success', 'Conta criada com sucesso! Bem-vindo ao Pride Path!');
+    }
+
+    /**
+     * Reenvia o código de verificação.
+     */
+    public function resendVerificationCode(Request $request)
+    {
+        $email = $request->email;
+        
+        $verification = EmailVerification::where('email', $email)->first();
+        
+        if (!$verification) {
+            return redirect()->route('user-create')->with('error', 'Nenhuma verificação pendente encontrada para este email.');
+        }
+        
+        // Gerar novo código
+        $verificationCode = mt_rand(100000, 999999);
+        
+        // Atualizar verificação
+        $verification->update([
+            'verification_code' => $verificationCode,
+            'expires_at' => Carbon::now()->addMinutes(30)
+        ]);
+        
+        // Enviar email com novo código
+        try {
+            Mail::send('emails.verification-code', ['verificationCode' => $verificationCode], function ($message) use ($email) {
+                $message->to($email)
+                        ->subject('Verificação de Email - Pride Path');
+            });
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Não foi possível enviar o email de verificação. Por favor, tente novamente.');
+        }
+        
+        return redirect()->route('verify.email.form', ['email' => $email])->with('success', 'Um novo código de verificação foi enviado para o seu email.');
+    }
 
     /**
      * Show the form for editing the specified resource.
@@ -266,20 +401,13 @@ public function create(Request $request)
             $strongPassword = $user->validatePassword($request->password);
             $dataToUpdate['password'] = Hash::make($strongPassword);
         }
-        if ($request->filled('phone')) {
-            // Remove caracteres não numéricos (parênteses, espaços, traços)
-            $dataToUpdate['phone'] = preg_replace('/[^0-9]/', '', $request->phone);
-}
+        
         // Atualiza o usuário
         $user->update($dataToUpdate);
         
         return back()->with('success', 'Perfil atualizado com sucesso!');
     }
 
-
-    /**
-     * Remove the specified resource from storage.
-     */
     /**
      * Remove the specified resource from storage.
      */

@@ -19,6 +19,10 @@ Route::post('/criar-conta', [UserController::class, 'store'])->name('user-insert
 Route::get('/login', [AuthController::class, 'index'])->name('login');
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
+Route::get('/verificar-email', [UserController::class, 'showVerificationForm'])->name('verify.email.form');
+Route::post('/verificar-email', [UserController::class, 'verifyEmail'])->name('verify.email');
+Route::get('/reenviar-codigo/{email}', [UserController::class, 'resendVerificationCode'])->name('resend.verification');
+
 Route::get('/',[ServiceController::class,'index'])->name('service-index');
 
 Route::middleware(['throttle:login-attempts'])->group(function () {
