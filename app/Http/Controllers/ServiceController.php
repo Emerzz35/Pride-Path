@@ -85,14 +85,23 @@ class ServiceController extends Controller
         $ratingExists = $user
             ? Rating::where('user_id', $user->id)->where('service_id', $Service->id)->exists()
             : false;
-
-        return view('service-show')
-            ->with('Service', $Service)
-            ->with('categories', $categories)
-            ->with('serviceCategories', $serviceCategories)
-            ->with('ratings', $ratings)
-            ->with('ratingExists', $ratingExists);
+        
+    // Verificar se o usuário já fez um pedido deste serviço
+    $hasMadeOrder = false;
+    if ($user) {
+        $hasMadeOrder = \App\Models\Order::where('user_id', $user->id)
+            ->where('service_id', $Service->id)
+            ->exists();
     }
+
+    return view('service-show')
+        ->with('Service', $Service)
+        ->with('categories', $categories)
+        ->with('serviceCategories', $serviceCategories)
+        ->with('ratings', $ratings)
+        ->with('ratingExists', $ratingExists)
+        ->with('hasMadeOrder', $hasMadeOrder);
+}
 
     public function index(Request $request) {
         $query = Service::with(['ServiceImage', 'categories', 'ratings'])->where('activated', 1);
