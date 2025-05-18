@@ -47,6 +47,22 @@
                     </select>
                 </div>
 
+                <div class="md:w-64">
+                    <label for="orderBy" class="block text-sm font-medium text-titulo mb-1">Ordenar por</label>
+                    <select 
+                        name="orderBy" 
+                        id="orderBy"
+                        class="w-full bg-input rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-destaque appearance-none"
+                    >
+                        <option value="newest" {{ request('orderBy') == 'newest' ? 'selected' : '' }}>Mais recentes</option>
+                        <option value="oldest" {{ request('orderBy') == 'oldest' ? 'selected' : '' }}>Mais antigos</option>
+                        <option value="price_asc" {{ request('orderBy') == 'price_asc' ? 'selected' : '' }}>Menor preço</option>
+                        <option value="price_desc" {{ request('orderBy') == 'price_desc' ? 'selected' : '' }}>Maior preço</option>
+                        <option value="rating_desc" {{ request('orderBy') == 'rating_desc' ? 'selected' : '' }}>Melhor avaliação</option>
+                        <option value="rating_asc" {{ request('orderBy') == 'rating_asc' ? 'selected' : '' }}>Pior avaliação</option>
+                    </select>
+                </div>
+
                 <div class="md:ml-2">
                     <button 
                         type="submit"

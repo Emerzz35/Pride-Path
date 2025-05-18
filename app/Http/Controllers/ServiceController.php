@@ -95,14 +95,16 @@ class ServiceController extends Controller
     }
 
     public function index(Request $request) {
-        $query = Service::with(['ServiceImage', 'categories'])->where('activated', 1);
-    
+        $query = Service::with(['ServiceImage', 'categories', 'ratings'])->where('activated', 1);
+
+        // Filtro por categoria
         if ($request->filled('category')) {
             $query->whereHas('categories', function ($q) use ($request) {
                 $q->where('categories.id', $request->category);
             });
         }
-    
+
+        // Filtro por pesquisa
         if ($request->filled('search')) {
             $searchTerm = $request->search;
             $query->where(function ($q) use ($searchTerm) {
@@ -113,10 +115,40 @@ class ServiceController extends Controller
                   });
             });
         }
-    
+
+        // Ordenação
+        if ($request->filled('orderBy')) {
+            switch ($request->orderBy) {
+                case 'newest':
+                    $query->orderBy('created_at', 'desc');
+                    break;
+                case 'oldest':
+                    $query->orderBy('created_at', 'asc');
+                    break;
+                case 'price_asc':
+                    $query->orderBy('price', 'asc');
+                    break;
+                case 'price_desc':
+                    $query->orderBy('price', 'desc');
+                    break;
+                case 'rating_desc':
+                    $query->withAvg('ratings', 'rating')->orderByDesc('ratings_avg_rating');
+                    break;
+                case 'rating_asc':
+                    $query->withAvg('ratings', 'rating')->orderBy('ratings_avg_rating', 'asc');
+                    break;
+                default:
+                    $query->orderBy('created_at', 'desc');
+                    break;
+            }
+        } else {
+            // Ordenação padrão: mais recentes primeiro
+            $query->orderBy('created_at', 'desc');
+        }
+
         $services = $query->get();
         $categories = Category::all();
-    
+
         return view('service-index', compact('services', 'categories'));
     }
     
@@ -213,5 +245,4 @@ class ServiceController extends Controller
 
     return redirect()->route('service-index')->with('success', 'Serviço excluído com sucesso.');
     }
-
 }
