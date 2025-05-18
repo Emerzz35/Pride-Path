@@ -10,7 +10,9 @@ use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
 
 
-//Route::get('/', function () { return view('sobre');});
+Route::get('/sobre', function () { 
+    return view('sobre');
+})->name('sobre');
 
 Route::get('/criar-conta', [UserController::class, 'create'])->name('user-create');
 Route::post('/criar-conta', [UserController::class, 'store'])->name('user-insert');

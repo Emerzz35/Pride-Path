@@ -11,6 +11,12 @@
                     <img src="/img/logo/LOGO-PRIDEPATH.svg" alt="Logo" class="w-12 h-12" />
                     <span class="font-bold text-lg h-full">Pride Path</span>
                 </x-button>
+                <x-button 
+                        class="px-4 py-2 rounded-md hover:bg-indigo-100 transition-colors duration-200" 
+                        linkto='sobre'
+                    >
+                        Sobre
+                </x-button>
 
                 <!-- Botões de navegação - visíveis apenas em telas maiores -->
                 @auth
@@ -157,6 +163,7 @@
     <!-- Menu mobile - aparece quando o botão de menu é clicado -->
     <div id="mobile-menu" class="md:hidden hidden bg-white shadow-md">
         <div class="px-4 py-3 space-y-3">
+            
             @auth
                 <form method="GET" action="{{ route('service-index') }}" class="flex">
                     <input 
