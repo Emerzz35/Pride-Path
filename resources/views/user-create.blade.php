@@ -381,12 +381,15 @@
                     Já tem uma conta? 
                     <a href="{{ route('login') }}" class="text-link">Entrar</a>
                 </span>
-                
-                <x-button 
+                <div class="g-recaptcha" data-sitekey="{{ env('GOOGLE_RECAPTTCHA_KEY') }}"></div>
+                 @error('g-recaptcha-response')
+                    <p class="text-red-500 text-sm">{{ $message }}</p>    
+                @enderror
+                <x-confirm-button 
                     class="w-full py-3 bg-botao text-white rounded-xl hover:bg-opacity-90 transition-colors duration-200" 
                     linkto='user-insert'>
                     Criar nova conta
-                </x-button>
+                </x-confirm-button>
                 
                 @if (session('status'))
                 <span class="text-red-700">{{ session('status') }}</span>

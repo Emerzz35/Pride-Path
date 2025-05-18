@@ -3,7 +3,7 @@
 @section('content')
 <main class='h-screen flex justify-center items-center'>
     <div class='flex flex-col justify-center items-center'>
-        <img src="/img/logo/LOGOTIPO-PRIDEPATH.svg" alt="Logo" class="" />
+        <img src="/img/logo/LOGOTIPO-PRIDEPATH.svg" alt="Logo" class="h-70" />
         
         <h1 class="text-xl font-bold text-titulo mt-5">Recuperar Senha</h1>
         
@@ -33,6 +33,11 @@
                 <span class="text-red-700 mt-1 text-sm">{{ $message }}</span>    
             @enderror
             
+            <div class="g-recaptcha mt-5" data-sitekey="{{ env('GOOGLE_RECAPTTCHA_KEY') }}"></div>
+            @error('g-recaptcha-response')
+                        <p class="text-red-500 text-sm">{{ $message }}</p>    
+            @enderror  
+
             <x-button 
                 class='w-full mt-5 bg-botao text-white px-4 py-2 rounded-xl hover:bg-opacity-90 transition-colors duration-200'
                 linkto='password.email'

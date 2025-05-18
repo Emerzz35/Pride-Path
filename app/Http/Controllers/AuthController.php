@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Auth\Events\PasswordReset;
 use App\Models\User;
+use App\Rules\ReCaptcha;
 
 class AuthController extends Controller
 {
@@ -23,20 +24,23 @@ class AuthController extends Controller
 
    public function loginAtttempt(Request $request)
    {
-    $credentials = $request->validate([
-        'email' => 'required|email',
-        'password' => 'required'
-    ]);
+        $credentials = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+            'g-recaptcha-response' => [new ReCaptcha]
+        ]);
+        
+        unset($credentials['g-recaptcha-response']);
 
-    
-    if(Auth::attempt($credentials)){
-        $request->session()->regenerate();
+        
+        if(Auth::attempt($credentials)){
+            $request->session()->regenerate();
 
-        $userId = Auth::User()->id;
-        return redirect()->route('service-index');
-    }
+            $userId = Auth::User()->id;
+            return redirect()->route('service-index');
+        }
 
-        return back()->withInput()->with('status', 'Login invalido');
+            return back()->withInput()->with('status', 'Login invalido');
    }
 
    public function logout(Request $request)
@@ -63,7 +67,10 @@ class AuthController extends Controller
    {
        $request->validate([
            'email' => 'required|email',
+           'g-recaptcha-response' => [new ReCaptcha]
        ]);
+       
+        unset($request['g-recaptcha-response']);
 
        // Send the password reset link
        $status = Password::sendResetLink(
@@ -94,7 +101,7 @@ class AuthController extends Controller
        $request->validate([
            'token' => 'required',
            'email' => 'required|email',
-           'password' => 'required|min:7|confirmed',
+           'password' => 'required|min:7|confirmed',           
        ]);
 
        // Find the user

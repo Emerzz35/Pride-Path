@@ -7,6 +7,7 @@
         @vite('resources/css/app.css')
         <title>Pride Path</title>
         @stack('styles')
+         <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     </head>
     <body class="bg-fundo min-h-screen">
         {{-- Setup padrão para todas as paginas --}}

@@ -12,6 +12,7 @@ use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Mail;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
+use App\Rules\ReCaptcha;
 
 class UserController extends Controller
 {
@@ -102,6 +103,7 @@ class UserController extends Controller
                 'address_number' => 'min:1|max:9999999999|integer',
                 'address_city' => 'required|min:3|max:200',
                 'state_id' => 'required',
+                'g-recaptcha-response' => [new ReCaptcha]
             ]);
         } elseif ($request->user_type === 'pj') {
             $validated = $request->validate([
@@ -118,6 +120,7 @@ class UserController extends Controller
                 'state_registration' => 'required|min:8|max:20',
                 'state_id' => 'required',
                 'responsable' => 'required|min:5|max:200',
+                'g-recaptcha-response' => [new ReCaptcha]
             ]);
         }
         
@@ -135,6 +138,7 @@ class UserController extends Controller
         }
         
         // Remover confirmações de email e senha dos dados armazenados
+        unset($userData['g-recaptcha-response']);
         unset($userData['email_confirmation']);
         unset($userData['password_confirmation']);
         
